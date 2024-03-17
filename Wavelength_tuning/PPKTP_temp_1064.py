@@ -53,8 +53,18 @@ period_356_lam_i = np.zeros(191)
 initial_guess = 0.0
 
 # Initial guess for the solution 532 pump
+period_7_lam_s = np.zeros(191)
+period_7_lam_i = np.zeros(191)
+period_89_lam_s = np.zeros(191)
+period_89_lam_i = np.zeros(191)
 period_9_lam_s = np.zeros(191)
 period_9_lam_i = np.zeros(191)
+period_95_lam_s = np.zeros(191)
+period_95_lam_i = np.zeros(191)
+period_10_lam_s = np.zeros(191)
+period_10_lam_i = np.zeros(191)
+period_11_lam_s = np.zeros(191)
+period_11_lam_i = np.zeros(191)
 
 # Use fsolve to find the numerical solution
 for i in range (0, 191):
@@ -70,9 +80,25 @@ for i in range (0, 191):
     period_356_lam_s[i] = fsolve(equation_to_solve, initial_guess, args=(i, 35.6))
     period_356_lam_i[i] = lam_1(period_356_lam_s[i])
 
+    initial_guess = [0.955]
+    period_89_lam_s[i] = fsolve(equation_to_solve, initial_guess, args=(i, 8.9))
+    period_89_lam_i[i] = lam_1(period_89_lam_s[i])
+
     initial_guess = [0.855]
     period_9_lam_s[i] = fsolve(equation_to_solve, initial_guess, args=(i, 9))
     period_9_lam_i[i] = lam_1(period_9_lam_s[i])
+
+    initial_guess = [0.855]
+    period_95_lam_s[i] = fsolve(equation_to_solve, initial_guess, args=(i, 9.5))
+    period_95_lam_i[i] = lam_1(period_95_lam_s[i])
+
+    initial_guess = [0.755]
+    period_10_lam_s[i] = fsolve(equation_to_solve, initial_guess, args=(i, 10))
+    period_10_lam_i[i] = lam_1(period_10_lam_s[i])
+
+    initial_guess = [0.655]
+    period_11_lam_s[i] = fsolve(equation_to_solve, initial_guess, args=(i, 11))
+    period_11_lam_i[i] = lam_1(period_11_lam_s[i])
 
 
 
@@ -92,8 +118,16 @@ x2 = np.linspace(0, 190, 191)
 # plt.plot(x2, period_378_lam_i, color='red')
 # plt.plot(x2, period_356_lam_s, label="35.6μm", color='orange')
 # plt.plot(x2, period_356_lam_i, color='orange')
-plt.plot(x2, period_9_lam_s, label="9μm", color='green')
-plt.plot(x2, period_9_lam_i, color='green')
+plt.plot(x2, period_89_lam_s, label="8.9μm", color='green')
+plt.plot(x2, period_89_lam_i, color='green')
+plt.plot(x2, period_9_lam_s, label="9μm", color='black')
+plt.plot(x2, period_9_lam_i, color='black')
+plt.plot(x2, period_95_lam_s, label="9.5μm", color='red')
+plt.plot(x2, period_95_lam_i, color='red')
+plt.plot(x2, period_10_lam_s, label="10μm", color='blue')
+plt.plot(x2, period_10_lam_i, color='blue')
+plt.plot(x2, period_11_lam_s, label="11μm", color='purple')
+plt.plot(x2, period_11_lam_i, color='purple')
 
 plt.legend()
 
@@ -103,10 +137,10 @@ plt.legend()
 
 plt.xlabel('Temperature (°C)')
 plt.ylabel('Wavelength (μm)')
-plt.title('Wavelength-tuning curve')
+plt.title('PPKTP Wavelength-tuning curve for 532')
 
-plt.xlim([40, 200])
-plt.ylim([0.85, 1.5])
+plt.xlim([0, 200])
+plt.ylim([0.5, 2])
 
 
 # # Set different precision for y axis
