@@ -11,6 +11,7 @@ from scipy.signal import argrelextrema
 c = 299792458
 
 # Monochromatic light
+T0 = 30           # Temperature (Celcius)
 N_e1064 = 1.8718  # 1064, Nz
 N_o1064 = 1.7768  # 1064, Ny 
 N_e532 = 2.0587   # 532,  Nz
@@ -45,18 +46,17 @@ def transmission(n, d, omega):
 num_lengths = 2
 precision = 100000
 crystal_length = np.linspace(10e-3, 20e-3, num_lengths)
-wavelength = np.linspace(1064.4e-9, 1064.6e-9, precision)
+wavelength = np.linspace(1064.7e-9, 1064.8e-9, precision)
 # freq = np.linspace(280e12, 283e12, 100000) # 276THz ~ 285THz
 
 y_532o = np.array([np.linspace(0, 1, precision) for _ in range(num_lengths)])
 y_1064o = np.array([np.linspace(0, 1, precision) for _ in range(num_lengths)])
 y_1064e = np.array([np.linspace(0, 1, precision) for _ in range(num_lengths)])
 
-# Type 2 o = o + e
+# Type 2 o = o + e, from refractive_index.py
 for i in range (0, num_lengths):
-    y_532o[i] = transmission(N_o532, crystal_length[i], 2 * np.pi * c / wavelength)
-    y_1064o[i] = transmission(N_o1064, crystal_length[i], 2 * np.pi * c / wavelength)
-    y_1064e[i] = transmission(N_e1064, crystal_length[i], 2 * np.pi * c / wavelength)
+    y_1064o[i] = transmission(n_o_3(wavelength * 1e6, T0), crystal_length[i], 2 * np.pi * c / wavelength)
+    y_1064e[i] = transmission(n_e(wavelength * 1e6, T0), crystal_length[i], 2 * np.pi * c / wavelength)
 
 # Find local maxima indices
 # max_indices_532o = argrelextrema(y_532o, np.greater)
@@ -86,8 +86,8 @@ for i in range(0, num_lengths):
     max_indices_1064e = argrelextrema(y_1064e[i], np.greater)
     max_wavelength_1064o = wavelength[max_indices_1064o]
     max_wavelength_1064e = wavelength[max_indices_1064e]
-    max_1064o = transmission(N_o1064, L, 2 * np.pi * c / max_wavelength_1064o)
-    max_1064e = transmission(N_e1064, L, 2 * np.pi * c / max_wavelength_1064e)
+    max_1064o = transmission(n_o_3(max_wavelength_1064o * 1e6, T0), L, 2 * np.pi * c / max_wavelength_1064o)
+    max_1064e = transmission(n_e(max_wavelength_1064e * 1e6, T0), L, 2 * np.pi * c / max_wavelength_1064e)
     # axs[0].scatter(max_wavelength_532o, max_532o, color='red', label='Local Maxima 532o')
     axs[i].scatter(max_wavelength_1064o, max_1064o, color='blue', label='Local Maxima 1064o')
     axs[i].scatter(max_wavelength_1064e, max_1064e, color='green', label='Local Maxima 1064e')
