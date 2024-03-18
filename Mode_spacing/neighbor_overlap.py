@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 from PPKTP_refractive_index import *
 from scipy.signal import argrelextrema
+from scipy.integrate import simps
 
 # speed of light
 c = 299792458
@@ -72,6 +73,21 @@ for i in range (0, num_lengths):
 # max_1064o = transmission(N_o1064, L, 2 * np.pi * c / max_wavelength_1064o)
 # max_1064e = transmission(N_e1064, L, 2 * np.pi * c / max_wavelength_1064e)
 
+# Calculate the overlapping integral using Simpson's rule
+res = np.linspace(1064.4274e-9, 1064.4325e-9, 100000)  # range at resonance
+notRes = np.linspace(1064.45825e-9, 1064.46325e-9, 100000)  # range not at resonance, the one closest to resonace
+
+normalization = simps(transmission(N_o1064, crystal_length[i], 2 * np.pi * c / res), res)
+
+resonance = simps(np.minimum(transmission(N_o1064, crystal_length[i], 2 * np.pi * c / res), 
+                                        transmission(N_e1064, crystal_length[i], 2 * np.pi * c / res)), res)
+
+not_resonance_first = simps(np.minimum(transmission(N_o1064, crystal_length[i], 2 * np.pi * c / notRes), 
+                                        transmission(N_e1064, crystal_length[i], 2 * np.pi * c / notRes)), notRes)
+
+
+print("Overlapping Integral at resonance", resonance / normalization)
+print("Overlapping Integral after first resonance", not_resonance_first / normalization)
 
 fig, axs = plt.subplots(num_lengths, 1, figsize=(10, 8))
 
